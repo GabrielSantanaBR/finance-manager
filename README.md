@@ -1,50 +1,65 @@
 # Finance Manager
 
-Sistema web genérico de gestão financeira para pequenas organizações, equipes e negócios. O projeto reúne lançamentos, aprovações, planejamento, contas, relatórios e auditoria em uma interface única.
+Sistema web genérico de gestão financeira para pequenas organizações, equipes e negócios. A base pública demonstra modelagem de receitas, despesas, departamentos, contas, gastos recorrentes, auditoria, autenticação e regras de aprovação.
 
-> Esta versão foi adaptada a partir de um sistema real desenvolvido para uma organização. As regras, dados e nomenclaturas específicas do cliente foram removidas para transformar o projeto em uma demonstração reutilizável de portfólio.
+> Esta versão foi adaptada a partir de um sistema real. Dados, anexos, identidade visual e regras específicas do cliente foram removidos antes da publicação.
 
-## Principais recursos
+## Domínios demonstrados
 
-- Dashboard executivo e visão restrita por departamento.
-- Despesas com rascunho, itens, comprovantes protegidos e fluxo de aprovação.
-- Receitas por categoria, anexos, observações e aprovação.
-- Gastos fixos mensais com geração de despesa ao registrar pagamento.
-- Orçamento mensal por departamento e acompanhamento de consumo.
-- Contas financeiras com movimentação manual e saldo consolidado.
-- Livro-caixa, relatórios mensais/anuais, calendário e trilha de auditoria.
-- Exportação Excel e relatórios PDF.
-- Importação XLSX com validação de formato, período e duplicidade.
-- Busca global, alertas operacionais, tema claro/escuro e backup.
+- Usuários com perfis de administrador financeiro e responsável de departamento.
+- Despesas com itens, comprovantes, categorias e estados de aprovação.
+- Receitas categorizadas e workflow de revisão.
+- Gastos fixos e pagamentos por competência.
+- Orçamentos por departamento.
+- Contas financeiras e movimentações.
+- Auditoria de ações administrativas.
+- Validação de documentos por extensão, tamanho e assinatura do arquivo.
+- Configuração segura para PostgreSQL e ambientes de produção.
 
-## Perfis
+## Edição pública
 
-| Perfil | Acesso |
-|---|---|
-| Responsável de departamento | Dashboard e despesas do próprio departamento |
-| Administrador financeiro | Operação financeira, primeira revisão e relatórios |
-| Administrador máximo | Acesso total, aprovação final, usuários, departamentos e auditoria |
+A implementação privada que originou este case possui fluxos operacionais, relatórios e telas adicionais. Neste repositório público, a camada de domínio e segurança foi preservada e a interface foi reduzida a uma demonstração genérica para não expor particularidades do cliente.
+
+O nome técnico `ministries` permanece em alguns pontos do schema por compatibilidade histórica; na versão genérica ele representa **departamentos/centros de responsabilidade**.
 
 ## Tecnologias
 
-Python · Django · PostgreSQL · Bootstrap · Chart.js · OpenPyXL · ReportLab · Gunicorn · WhiteNoise
-
-## Segurança
-
-A edição pública não contém dados reais, anexos de clientes, chaves, credenciais ou identidade visual da implementação original. Variáveis sensíveis são fornecidas por ambiente.
+Python · Django · PostgreSQL · Bootstrap · OpenPyXL · ReportLab · Gunicorn · WhiteNoise
 
 ## Desenvolvimento local
 
+Requer Python 3.12+.
+
 ```bash
 python -m venv .venv
-source .venv/bin/activate
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 cp .env.example .env
+```
+
+Para desenvolvimento local, ajuste `.env` para `DEBUG=True` e então gere o schema da edição pública:
+
+```bash
+python manage.py makemigrations accounts core ministries expenses revenues fixed_expenses treasury
 python manage.py migrate
 python manage.py createsuperuser
 python manage.py runserver
 ```
 
+A aplicação ficará disponível em `http://127.0.0.1:8000/` e o health check em `/health/`.
+
+## Segurança
+
+- Nenhuma credencial ou chave real é versionada.
+- Arquivos enviados são validados antes da persistência.
+- `DEBUG` fica desligado por padrão.
+- HTTPS, HSTS, cookies seguros, CSRF e cabeçalhos de segurança são ativados em produção.
+- Configuração de banco, hosts e segredos é fornecida por variáveis de ambiente.
+
+## Arquitetura
+
+Veja [`docs/architecture.md`](docs/architecture.md) para a divisão dos módulos e decisões de compatibilidade.
+
 ## Objetivo
 
-Projeto de portfólio para demonstrar arquitetura Django, autenticação e autorização, modelagem relacional, regras de negócio, relatórios, automações financeiras e dashboards administrativos.
+Projeto de portfólio para demonstrar arquitetura Django, autenticação e autorização, modelagem relacional, regras de negócio, segurança de uploads e construção de sistemas administrativos orientados a dados.
